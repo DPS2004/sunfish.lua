@@ -19,7 +19,9 @@ local MATE_VALUE = 30000
 -- Our board is represented as a 120 character string. The padding allows for
 -- fast detection of moves that don't stay within the board.
 local A1, H1, A8, H8 = 91, 98, 21, 28
-local initial = 
+
+
+initial = 
     '         \n' .. --   0 -  9
     '         \n' .. --  10 - 19
     ' rnbqkbnr\n' .. --  20 - 29
@@ -160,7 +162,7 @@ local function swapcase(s)
    return s2
 end
 
-local Position = {}
+Position = {}
 
 function Position.new(board, score, wc, bc, ep, kp)
    --[[  A state of a chess game
@@ -530,15 +532,17 @@ local strsplit = function(a)
    return out
 end
 
-local function printboard(board)
-   -- local l = strsplit(board, '\n')
-   -- for k,v in ipairs(l) do
-      -- for i=1,#v do
-	 -- io.write(v:sub(i,i))
-	 -- io.write('  ')
-      -- end
-      -- io.write('\n')
-   -- end
+function printboard(board)
+   local l = strsplit(board, '\n')
+   local outstr = ''
+	for k,v in ipairs(l) do
+		outstr = ''
+		for i=1,string.len(v) do
+			outstr = outstr .. string.sub(v,i,i)
+			outstr = outstr .. ' '
+		end
+		Trace(outstr)
+	end
 end
 
 local function main()
