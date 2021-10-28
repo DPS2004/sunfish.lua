@@ -515,7 +515,7 @@ end
 local strsplit = function(a)
    local out = {}
    while true do
-      local pos, _ = a:find('\n')
+      local pos, _ = string.find(a,'\n')
       if pos then
 	 out[#out+1] = a:sub(1, pos-1)
 	 a = a:sub(pos+1)
