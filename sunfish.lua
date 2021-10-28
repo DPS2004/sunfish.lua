@@ -2,7 +2,10 @@
 -- embarassing and ugly translation done by Soumith Chintala
 -- Code License: BSD
 
+--modified in a very clumsy way to work with notitg by DPS2004
+
 -- The table size is the maximum number of elements in the transposition table.
+
 local TABLE_SIZE = 1e6
 
 -- This constant controls how much time we spend on looking for optimal moves.
@@ -517,8 +520,8 @@ local strsplit = function(a)
    while true do
       local pos, _ = string.find(a,'\n')
       if pos then
-	 out[#out+1] = a:sub(1, pos-1)
-	 a = a:sub(pos+1)
+	 out[#out+1] = string.sub(a,1, pos-1)
+	 a = string.sub(a,pos+1)
       else
 	 out[#out+1] = a
 	 break
@@ -528,14 +531,14 @@ local strsplit = function(a)
 end
 
 local function printboard(board)
-   local l = strsplit(board, '\n')
-   for k,v in ipairs(l) do
-      for i=1,#v do
-	 io.write(v:sub(i,i))
-	 io.write('  ')
-      end
-      io.write('\n')
-   end
+   -- local l = strsplit(board, '\n')
+   -- for k,v in ipairs(l) do
+      -- for i=1,#v do
+	 -- io.write(v:sub(i,i))
+	 -- io.write('  ')
+      -- end
+      -- io.write('\n')
+   -- end
 end
 
 local function main()
@@ -588,7 +591,7 @@ local function main()
 end
 
 
-main()
+--main()
 
 
 
