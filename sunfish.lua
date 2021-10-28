@@ -14,7 +14,7 @@ local NODES_SEARCHED = 1e4
 -- Mate value must be greater than 8*queen + 2*(rook+knight+bishop)
 -- King value is set to twice this value such that if the opponent is
 -- 8 queens up, but we got the king, we still exceed MATE_VALUE.
-local MATE_VALUE = 30000
+MATE_VALUE = 30000
 
 -- Our board is represented as a 120 character string. The padding allows for
 -- fast detection of moves that don't stay within the board.
@@ -860,7 +860,7 @@ function Position:genMoves()
                 for j = i + d, limit, d do
                     local q = string.sub(self.board,j + __1, j + __1)
                     -- Stay inside the board
-                    if isspace(self.board,j + __1, j + __1) then
+                    if isspace(string.sub(self.board,j + __1, j + __1)) then
                         break
                     end
                     -- Castling
@@ -903,8 +903,17 @@ function Position:genMoves()
     return moves
 end
 
+local function reverse(v)
+	local outstr = ''
+	for i = 1, string.len(v) do
+		outstr = string.sub(v, i, i) .. outstr 
+	end
+	return outstr
+end
+	
+
 function Position:rotate()
-    return self.new(swapcase(self.board:reverse()), -self.score, self.bc, self.wc, 119 - self.ep, 119 - self.kp)
+    return self.new(swapcase(reverse(self.board)), -self.score, self.bc, self.wc, 119 - self.ep, 119 - self.kp)
 end
 
 function Position:move(move)
@@ -962,11 +971,16 @@ end
 function Position:value(move)
     local i, j = move[0 + __1], move[1 + __1]
     local p, q = string.sub(self.board,i + __1, i + __1), string.sub(self.board,j + __1, j + __1)
+	assert(i)
+	assert(j)
+	assert(p)
+	assert(q)
+	
     -- Actual move
     local score = pst[p][j + __1] - pst[p][i + __1]
     -- Capture
     if islower(q) then
-        score = score + pst[q:upper()][j + __1]
+        score = score + pst[string.upper(q)][j + __1]
     end
     -- Castling check detection
     if math.abs(j - self.kp) < 2 then
@@ -1118,7 +1132,7 @@ local function bound(pos, gamma, depth) --
     return best
 end
 
-local function search(pos, maxn)
+function search(pos, maxn)
     -- Iterative deepening MTD-bi search
     maxn = maxn or NODES_SEARCHED
     nodes = 0 -- the global value "nodes"
