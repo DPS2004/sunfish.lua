@@ -797,28 +797,28 @@ end
 local special = ". \n"
 
 local function isupper(s)
-    if special:find(s) then
+    if string.find(special,s) then
         return false
     end
-    return s:upper() == s
+    return string.upper(s) == s
 end
 
 local function islower(s)
-    if special:find(s) then
+    if string.find(special,s) then
         return false
     end
-    return s:lower() == s
+    return string.lower(s) == s
 end
 
 -- super inefficient
 local function swapcase(s)
     local s2 = ""
     for i = 1, #s do
-        local c = s:sub(i, i)
+        local c = string.sub(s,i, i)
         if islower(c) then
-            s2 = s2 .. c:upper()
+            s2 = s2 .. string.upper(c)
         else
-            s2 = s2 .. c:lower()
+            s2 = s2 .. string.lower(c)
         end
     end
     return s2
@@ -853,14 +853,14 @@ function Position:genMoves()
     -- as defined in the 'directions' map. The rays are broken e.g. by
     -- captures or immediately in case of pieces such as knights.
     for i = 1 - __1, #self.board - __1 do
-        local p = self.board:sub(i + __1, i + __1)
+        local p = string.sub(self.board,i + __1, i + __1)
         if isupper(p) and directions[p] then
             for _, d in ipairs(directions[p]) do
                 local limit = (i + d) + (10000) * d -- fake limit
                 for j = i + d, limit, d do
-                    local q = self.board:sub(j + __1, j + __1)
+                    local q = string.sub(self.board,j + __1, j + __1)
                     -- Stay inside the board
-                    if isspace(self.board:sub(j + __1, j + __1)) then
+                    if isspace(self.board,j + __1, j + __1) then
                         break
                     end
                     -- Castling
@@ -882,7 +882,7 @@ function Position:genMoves()
                     if p == "P" and (d == N or d == 2 * N) and q ~= "." then
                         break
                     end
-                    if p == "P" and d == 2 * N and (i < A1 + N or self.board:sub(i + N + __1, i + N + __1) ~= ".") then
+                    if p == "P" and d == 2 * N and (i < A1 + N or string.sub(self.board,i + N + __1, i + N + __1) ~= ".") then
                         break
                     end
                     -- Move it
@@ -910,16 +910,16 @@ end
 function Position:move(move)
     assert(move) -- move is zero-indexed
     local i, j = move[0 + __1], move[1 + __1]
-    local p, q = self.board:sub(i + __1, i + __1), self.board:sub(j + __1, j + __1)
+    local p, q = string.sub(self.board,i + __1, i + __1), string.sub(self.board,j + __1, j + __1)
     local function put(board, i, p)
-        return board:sub(1, i - 1) .. p .. board:sub(i + 1)
+        return string.sub(board,1, i - 1) .. p .. string.sub(board,i + 1)
     end
     -- Copy variables and reset ep and kp
     local board = self.board
     local wc, bc, ep, kp = self.wc, self.bc, 0, 0
     local score = self.score + self:value(move)
     -- Actual move
-    board = put(board, j + __1, board:sub(i + __1, i + __1))
+    board = put(board, j + __1, string.sub(board,i + __1, i + __1))
     board = put(board, i + __1, ".")
     -- Castling rights
     if i == A1 then
@@ -961,7 +961,7 @@ end
 
 function Position:value(move)
     local i, j = move[0 + __1], move[1 + __1]
-    local p, q = self.board:sub(i + __1, i + __1), self.board:sub(j + __1, j + __1)
+    local p, q = string.sub(self.board,i + __1, i + __1), string.sub(self.board,j + __1, j + __1)
     -- Actual move
     local score = pst[p][j + __1] - pst[p][i + __1]
     -- Capture
@@ -1169,11 +1169,11 @@ end
 -- User interface
 -------------------------------------------------------------------------------
 
-local function parse(c)
+function parse(c)
     if not c then
         return nil
     end
-    local p, v = c:sub(1, 1), c:sub(2, 2)
+    local p, v = string.sub(c,1, 1), string.sub(c,2, 2)
     if not (p and v and tonumber(v)) then
         return nil
     end
@@ -1187,7 +1187,7 @@ local function render(i)
     return string.char(fil + string.byte("a")) .. tostring(-rank + 1)
 end
 
-local function ttfind(t, k)
+function ttfind(t, k)
     assert(t)
     if not k then
         return false
@@ -1260,7 +1260,7 @@ local function main()
         while true do
             print("Your move: ")
             local crdn = io.read()
-            move = {parse(crdn:sub(1, 2)), parse(crdn:sub(3, 4))}
+            move = {parse(string.sub(crdn,1, 2)), parse(string.sub(crdn,3, 4))}
             if move[1] and move[2] and ttfind(pos:genMoves(), move) then
                 break
             else
