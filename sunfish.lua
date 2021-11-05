@@ -9,7 +9,6 @@
 local TABLE_SIZE = 1e6
 
 -- This constant controls how much time we spend on looking for optimal moves.
-NODES_SEARCHED = 1e1
 
 -- Mate value must be greater than 8*queen + 2*(rook+knight+bishop)
 -- King value is set to twice this value such that if the opponent is
